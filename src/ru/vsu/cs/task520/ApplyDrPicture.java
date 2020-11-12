@@ -21,9 +21,8 @@ public class ApplyDrPicture {
 
     public static void drawEnding(int width, char symbol) {
         System.out.print(symbol);
-        for (int x = 0; x < width - 2; x++) {
+        for (int x = 0; x < width - 2; x++)
             System.out.print('-');
-        }
         System.out.println(symbol);
     }
 
