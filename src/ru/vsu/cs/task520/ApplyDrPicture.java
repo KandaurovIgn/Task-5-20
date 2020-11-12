@@ -1,4 +1,4 @@
-ackage task520;
+package task520;
 
 import java.util.Scanner;
 
