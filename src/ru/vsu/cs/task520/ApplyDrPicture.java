@@ -1,131 +1,109 @@
-package task520;
+ackage task520;
 
 import java.util.Scanner;
 
 public class ApplyDrPicture {
-    enum position {left, right}
-
+    enum Position {left, right}
     ;
 
     public static void main(String[] args) {
-        int height = getHeight();
-        int width = getWidth();
-        
+        int height = getData("Height", 2);
+        int width = getData("Width", 2, 2);
+
         drawPicture(height, width);
     }
 
     public static void drawPicture(int height, int width) {
-        if (height == 2) {
-            drawATopLine(width);
-            drawALowerLine(width);
-            return;
-        } else {
-            drawATopLine(width);
-            drawABody(height, width);
-            drawALowerLine(width);
-        }
+        drawEnding(width, '+');
+        drawABody(height, width);
+        drawEnding(width, '*');
     }
 
-    public static void drawATopLine(int width) {
-        System.out.print('+');
+    public static void drawEnding(int width, char symbol) {
+        System.out.print(symbol);
         for (int x = 0; x < width - 2; x++) {
             System.out.print('-');
         }
-        System.out.println('+');
+        System.out.println(symbol);
     }
 
     public static void drawABody(int height, int width) {
-        int necessaryCounter = 1;//Need
-        int deducedCounter = 0;//Output
-        int stringCounter = 0;//Output in string;
-        int b = (width - 2) / 2;
-        position posit = position.left;
+
+        int necessaryCounter = 1;//Need *
+        int deducedCounter = 0;//Output *
+        Position posit = Position.left;
 
         for (int x = 0; x < height - 2; x++) {
-            if (deducedCounter == finishCounter && posit == position.left) {
+            if (deducedCounter < necessaryCounter) {
+                drawAPieceOfTheBody(posit, width);
+                deducedCounter++;
+                System.out.println();
+            }
+            if (posit == Position.left && deducedCounter == necessaryCounter) {
+                posit = Position.right;
                 deducedCounter = 0;
-                posit = position.right;
             }
-            if (deducedCounter == finishCounter && posit == position.right) {
+            if (posit == Position.right && deducedCounter == necessaryCounter) {
+                posit = Position.left;
                 deducedCounter = 0;
-                finishCounter++;
-                posit = position.left;
+                necessaryCounter++;
             }
-            for (int y = 0; y < width; y++) {
-                if (y == 0) {
-                    System.out.print('|');
-                    continue;
-                }
-                if (y == width - 1) {
-                    System.out.print('|');
-                    break;
-                }
-                if ((deducedCounter != finishCounter) && deducedCounter == 0) {
-                    if (posit == position.left) {
-                        for (int j = y; j <= b; j++) {
-                            System.out.print('*');
-                            y++;
-                        }
-                        deducedCounter++;
-                        stringCounter++;
-                    }
-                    if (posit == position.right) {
-                        for (int j = y; j <= b; j++) {
-                            System.out.print(' ');
-                            y++;
-                        }
-                        for (int z = y; z < width - 1; z++) {
-                            System.out.print('*');
-                            y++;
-                        }
-                        deducedCounter++;
-                        stringCounter++;
-                        y--;
-                        continue;
-                    }
-                }
-                System.out.print(' ');
-            }
-            stringCounter = 0;
-            System.out.println();
         }
     }
 
-    public static void drawALowerLine(int width) {
-        System.out.print('*');
-        for (int x = 0; x < width - 2; x++) {
-            System.out.print('-');
+    public static void drawAPieceOfTheBody(Position posit, int width) {
+
+        System.out.print("|");
+        if (posit == posit.left) {
+            drawHalfAPieceOfTheBody(width, '*');
+            drawHalfAPieceOfTheBody(width, ' ');
         }
-        System.out.println('*');
+        if (posit == posit.right) {
+            drawHalfAPieceOfTheBody(width, ' ');
+            drawHalfAPieceOfTheBody(width, '*');
+        }
+        System.out.print("|");
     }
 
-    public static int getHeight() {
-        Scanner s1 = new Scanner(System.in);
+    public static void drawHalfAPieceOfTheBody(int width, char symbol) {
+        for (int x = 0; x < (width - 2) / 2; x++)
+            System.out.print(symbol);
+    }
 
+    public static int getData(String valueName, int lowerLimit) {
         while (true) {
-            System.out.print("Input Height: ");
-            int height = s1.nextInt();
-            if (height < 2) {
-                System.out.println("Input ERROR! height >= 2");
-            } else
-                break;
+            int tempVar = getIntValue(valueName);
+            if (!isValueMeetTheRequirements(tempVar, lowerLimit))
+                System.out.println("Input ERROR!  " + valueName + " >= " + lowerLimit);
+            else
+                return tempVar;
         }
-        
-        return height;
     }
 
-    public static int getWidth() {
-        Scanner s1 = new Scanner(System.in);
-
+    public static int getData(String valueName, int lowerLimit, int divisibility) {
         while (true) {
-            System.out.print("Input Width: ");
-            int width = s1.nextInt();
-            if (width < 2 || width % 2 != 0) {
-                System.out.println("Input ERROR! width >= 2, width - is even integer");
-            } else
-                break;
+            int tempVar = getIntValue(valueName);
+            if (!isValueMeetTheRequirements(tempVar, lowerLimit, divisibility))
+                System.out.println("Input ERROR!  " + valueName + " >= " + lowerLimit + " && " + valueName + " % " + divisibility + " = 0");
+            else
+                return tempVar;
         }
-        
-        return width;
     }
+
+    public static int getIntValue(String valueName) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Input " + valueName + ":");
+
+        return scanner.nextInt();
+    }
+
+    public static boolean isValueMeetTheRequirements(int value, int lowerLimit, int divisibility) {
+        return (value >= lowerLimit) && (value % divisibility == 0);
+    }
+
+    public static boolean isValueMeetTheRequirements(int value, int lowerLimit) {
+        return value >= lowerLimit;
+    }
+
 }
